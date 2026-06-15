@@ -1,0 +1,17 @@
+services:
+  app:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${TRAEFIK_ROUTER_SERVICE}.entrypoints=web"
+      - "traefik.http.routers.${TRAEFIK_ROUTER_SERVICE}.rule=Host(`${TRAEFIK_HOST_RULE_SERVICE}`)"
+      - "traefik.http.services.${TRAEFIK_ROUTER_SERVICE}.loadbalancer.server.port=${MCP_PORT}"
+    networks:
+      - default
+      - traefik
+
+networks:
+  default: {}
+  patsy-backend:
+    external: true
+  traefik:
+    external: true

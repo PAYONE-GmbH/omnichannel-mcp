@@ -8,10 +8,12 @@ function textResult(data: unknown) {
 }
 
 export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): void {
-    server.tool(
+    server.registerTool(
         "list_checkouts",
-        "List checkouts for the configured merchant. Optional JSON query params for filtering.",
-        { queryParams: z.string().optional().describe("Optional JSON for GetCheckoutsQuery filter") },
+        {
+            description: "List checkouts for the configured merchant. Optional JSON query params for filtering.",
+            inputSchema: { queryParams: z.string().optional().describe("Optional JSON for GetCheckoutsQuery filter") },
+        },
         async ({ queryParams }) => {
             const api = new CheckoutApiClient(pcpClient.config);
             const query = queryParams ? JSON.parse(queryParams) : undefined;
@@ -20,12 +22,14 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
         },
     );
 
-    server.tool(
+    server.registerTool(
         "get_checkout",
-        "Get a checkout by commerce case ID and checkout ID.",
         {
-            commerceCaseId: z.string(),
-            checkoutId: z.string(),
+            description: "Get a checkout by commerce case ID and checkout ID.",
+            inputSchema: {
+                commerceCaseId: z.string(),
+                checkoutId: z.string(),
+            },
         },
         async ({ commerceCaseId, checkoutId }) => {
             const api = new CheckoutApiClient(pcpClient.config);
@@ -34,12 +38,14 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
         },
     );
 
-    server.tool(
+    server.registerTool(
         "create_checkout",
-        "Create a new checkout within a commerce case.",
         {
-            commerceCaseId: z.string(),
-            body: z.string().describe("JSON body for CreateCheckoutRequest"),
+            description: "Create a new checkout within a commerce case.",
+            inputSchema: {
+                commerceCaseId: z.string(),
+                body: z.string().describe("JSON body for CreateCheckoutRequest"),
+            },
         },
         async ({ commerceCaseId, body }) => {
             const api = new CheckoutApiClient(pcpClient.config);
@@ -48,13 +54,15 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
         },
     );
 
-    server.tool(
+    server.registerTool(
         "update_checkout",
-        "Update (patch) an existing checkout.",
         {
-            commerceCaseId: z.string(),
-            checkoutId: z.string(),
-            body: z.string().describe("JSON body for PatchCheckoutRequest"),
+            description: "Update (patch) an existing checkout.",
+            inputSchema: {
+                commerceCaseId: z.string(),
+                checkoutId: z.string(),
+                body: z.string().describe("JSON body for PatchCheckoutRequest"),
+            },
         },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new CheckoutApiClient(pcpClient.config);
@@ -63,12 +71,14 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
         },
     );
 
-    server.tool(
+    server.registerTool(
         "remove_checkout",
-        "Remove/delete a checkout.",
         {
-            commerceCaseId: z.string(),
-            checkoutId: z.string(),
+            description: "Remove/delete a checkout.",
+            inputSchema: {
+                commerceCaseId: z.string(),
+                checkoutId: z.string(),
+            },
         },
         async ({ commerceCaseId, checkoutId }) => {
             const api = new CheckoutApiClient(pcpClient.config);
@@ -77,13 +87,15 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
         },
     );
 
-    server.tool(
+    server.registerTool(
         "complete_checkout",
-        "Complete a checkout (finalize order).",
         {
-            commerceCaseId: z.string(),
-            checkoutId: z.string(),
-            body: z.string().describe("JSON body for CompleteOrderRequest"),
+            description: "Complete a checkout (finalize order).",
+            inputSchema: {
+                commerceCaseId: z.string(),
+                checkoutId: z.string(),
+                body: z.string().describe("JSON body for CompleteOrderRequest"),
+            },
         },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new CheckoutApiClient(pcpClient.config);

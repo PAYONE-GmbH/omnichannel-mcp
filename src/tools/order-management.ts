@@ -13,10 +13,12 @@ const scope = {
 };
 
 export function registerOrderManagementTools(server: McpServer, pcpClient: PcpClient): void {
-    server.tool(
+    server.registerTool(
         "create_order",
-        "Create an order for a checkout.",
-        { ...scope, body: z.string().describe("JSON body for OrderRequest") },
+        {
+            description: "Create an order for a checkout.",
+            inputSchema: { ...scope, body: z.string().describe("JSON body for OrderRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new OrderManagementCheckoutActionsApiClient(pcpClient.config);
             const result = await api.createOrder(pcpClient.merchantId, commerceCaseId, checkoutId, JSON.parse(body));
@@ -24,10 +26,12 @@ export function registerOrderManagementTools(server: McpServer, pcpClient: PcpCl
         },
     );
 
-    server.tool(
+    server.registerTool(
         "deliver_order",
-        "Mark an order as delivered.",
-        { ...scope, body: z.string().describe("JSON body for DeliverRequest") },
+        {
+            description: "Mark an order as delivered.",
+            inputSchema: { ...scope, body: z.string().describe("JSON body for DeliverRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new OrderManagementCheckoutActionsApiClient(pcpClient.config);
             const result = await api.deliverOrder(pcpClient.merchantId, commerceCaseId, checkoutId, JSON.parse(body));
@@ -35,10 +39,12 @@ export function registerOrderManagementTools(server: McpServer, pcpClient: PcpCl
         },
     );
 
-    server.tool(
+    server.registerTool(
         "return_order",
-        "Process a return for an order.",
-        { ...scope, body: z.string().optional().describe("Optional JSON body for ReturnRequest") },
+        {
+            description: "Process a return for an order.",
+            inputSchema: { ...scope, body: z.string().optional().describe("Optional JSON body for ReturnRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new OrderManagementCheckoutActionsApiClient(pcpClient.config);
             const result = await api.returnOrder(pcpClient.merchantId, commerceCaseId, checkoutId, body ? JSON.parse(body) : undefined);
@@ -46,10 +52,12 @@ export function registerOrderManagementTools(server: McpServer, pcpClient: PcpCl
         },
     );
 
-    server.tool(
+    server.registerTool(
         "cancel_order",
-        "Cancel an order.",
-        { ...scope, body: z.string().optional().describe("Optional JSON body for CancelRequest") },
+        {
+            description: "Cancel an order.",
+            inputSchema: { ...scope, body: z.string().optional().describe("Optional JSON body for CancelRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new OrderManagementCheckoutActionsApiClient(pcpClient.config);
             const result = await api.cancelOrder(pcpClient.merchantId, commerceCaseId, checkoutId, body ? JSON.parse(body) : undefined);

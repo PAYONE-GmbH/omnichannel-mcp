@@ -13,10 +13,12 @@ const scope = {
 };
 
 export function registerPaymentInformationTools(server: McpServer, pcpClient: PcpClient): void {
-    server.tool(
+    server.registerTool(
         "create_payment_information",
-        "Create payment information for a checkout.",
-        { ...scope, body: z.string().describe("JSON body for PaymentInformationRequest") },
+        {
+            description: "Create payment information for a checkout.",
+            inputSchema: { ...scope, body: z.string().describe("JSON body for PaymentInformationRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new PaymentInformationApiClient(pcpClient.config);
             const result = await api.createPaymentInformation(pcpClient.merchantId, commerceCaseId, checkoutId, JSON.parse(body));
@@ -24,10 +26,12 @@ export function registerPaymentInformationTools(server: McpServer, pcpClient: Pc
         },
     );
 
-    server.tool(
+    server.registerTool(
         "get_payment_information",
-        "Get payment information by ID.",
-        { ...scope, paymentInformationId: z.string() },
+        {
+            description: "Get payment information by ID.",
+            inputSchema: { ...scope, paymentInformationId: z.string() },
+        },
         async ({ commerceCaseId, checkoutId, paymentInformationId }) => {
             const api = new PaymentInformationApiClient(pcpClient.config);
             const result = await api.getPaymentInformation(pcpClient.merchantId, commerceCaseId, checkoutId, paymentInformationId);
@@ -35,10 +39,12 @@ export function registerPaymentInformationTools(server: McpServer, pcpClient: Pc
         },
     );
 
-    server.tool(
+    server.registerTool(
         "refund_payment_information",
-        "Refund via payment information.",
-        { ...scope, paymentInformationId: z.string(), body: z.string().describe("JSON body for PaymentInformationRefundRequest") },
+        {
+            description: "Refund via payment information.",
+            inputSchema: { ...scope, paymentInformationId: z.string(), body: z.string().describe("JSON body for PaymentInformationRefundRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentInformationId, body }) => {
             const api = new PaymentInformationApiClient(pcpClient.config);
             const result = await api.refundPaymentInformation(pcpClient.merchantId, commerceCaseId, checkoutId, paymentInformationId, JSON.parse(body));

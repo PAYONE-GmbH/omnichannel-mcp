@@ -3,20 +3,23 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { TokenManager } from "./auth/token-manager.js";
 import { createPcpMcpServer } from "./server.js";
 import { verifyToken, PatsyUser } from "./auth/keycloak.js";
+import { PcpClient } from "./pcp/client.js";
 
-const APP_WS_URL = process.env.APP_SERVICE_WS_URL || "ws://patsy-app-service:3000/";
 const PORT = parseInt(process.env.MCP_PORT || "3100");
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
+const PCP_API_HOST = process.env.PCP_API_HOST || "";
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "https://authorize.patsy-dev.payone-office.de";
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || "patsy";
-const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || "patsy-mcp";
+const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || "pcp-mcp";
 const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET || "";
+
+const PCP_API_KEY = process.env.PCP_API_KEY || "";
+const PCP_API_SECRET = process.env.PCP_API_SECRET || "";
+const PCP_MERCHANT_ID = process.env.PCP_MERCHANT_ID || "";
 
 const app = express();
 app.use(express.json());
-
-let mcpServer: ReturnType<typeof createPcpMcpServer> | null = null;
 
 async function authenticateRequest(authHeader: string | undefined): Promise<PatsyUser> {
     if (!authHeader?.startsWith("Bearer ")) {
@@ -30,7 +33,7 @@ async function authenticateRequest(authHeader: string | undefined): Promise<Pats
             azp: "pcp-mcp",
             sub: "pcp-api-key-user",
             preferredUsername: "pcp-mcp-api-key",
-            fullName: "MCP API Key User",
+            fullName: "PCP MCP API Key User",
             email: "",
             roles: [],
             groups: [],
@@ -41,6 +44,20 @@ async function authenticateRequest(authHeader: string | undefined): Promise<Pats
 }
 
 async function start() {
+    if (!PCP_API_KEY || !PCP_API_SECRET || !PCP_MERCHANT_ID) {
+        console.error("PCP_API_KEY, PCP_API_SECRET, and PCP_MERCHANT_ID must be set");
+        process.exit(1);
+    }
+
+    const pcpClient = new PcpClient({
+        apiKey: PCP_API_KEY,
+        apiSecret: PCP_API_SECRET,
+        merchantId: PCP_MERCHANT_ID,
+        ...(PCP_API_HOST && { host: PCP_API_HOST }),
+    });
+
+    const mcpServer = createPcpMcpServer(pcpClient);
+
     const tokenManager = new TokenManager({
         keycloakUrl: KEYCLOAK_URL,
         realm: KEYCLOAK_REALM,
@@ -76,16 +93,16 @@ async function start() {
     app.get("/health", (_req, res) => {
         res.json({
             status: "ok",
-            service: "pcp-mcp"
+            service: "pcp-mcp",
         });
     });
 
     app.listen(PORT, () => {
-        console.info(`Patsy MCP Server listening on port ${PORT}`);
+        console.info(`PCP MCP Server listening on port ${PORT}`);
     });
 }
 
 start().catch((err) => {
-    console.error("Failed to start Patsy MCP Service:", err);
+    console.error("Failed to start PCP MCP Service:", err);
     process.exit(1);
 });

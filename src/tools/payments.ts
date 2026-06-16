@@ -18,10 +18,12 @@ const paymentScope = {
 };
 
 export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): void {
-    server.tool(
+    server.registerTool(
         "create_payment",
-        "Create a payment execution for a checkout.",
-        { ...checkoutScope, body: z.string().describe("JSON body for PaymentExecutionRequest") },
+        {
+            description: "Create a payment execution for a checkout.",
+            inputSchema: { ...checkoutScope, body: z.string().describe("JSON body for PaymentExecutionRequest") },
+        },
         async ({ commerceCaseId, checkoutId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.createPayment(pcpClient.merchantId, commerceCaseId, checkoutId, JSON.parse(body));
@@ -29,10 +31,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "capture_payment",
-        "Capture a previously authorized payment.",
-        { ...paymentScope, body: z.string().describe("JSON body for CapturePaymentRequest") },
+        {
+            description: "Capture a previously authorized payment.",
+            inputSchema: { ...paymentScope, body: z.string().describe("JSON body for CapturePaymentRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.capturePayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, JSON.parse(body));
@@ -40,10 +44,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "cancel_payment",
-        "Cancel a payment execution.",
-        { ...paymentScope, body: z.string().describe("JSON body for CancelPaymentRequest") },
+        {
+            description: "Cancel a payment execution.",
+            inputSchema: { ...paymentScope, body: z.string().describe("JSON body for CancelPaymentRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.cancelPayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, JSON.parse(body));
@@ -51,10 +57,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "refund_payment",
-        "Refund a payment execution.",
-        { ...paymentScope, body: z.string().describe("JSON body for RefundRequest") },
+        {
+            description: "Refund a payment execution.",
+            inputSchema: { ...paymentScope, body: z.string().describe("JSON body for RefundRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.refundPayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, JSON.parse(body));
@@ -62,10 +70,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "complete_payment",
-        "Complete a payment that requires additional steps.",
-        { ...paymentScope, body: z.string().describe("JSON body for CompletePaymentRequest") },
+        {
+            description: "Complete a payment that requires additional steps.",
+            inputSchema: { ...paymentScope, body: z.string().describe("JSON body for CompletePaymentRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.completePayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, JSON.parse(body));
@@ -73,10 +83,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "pause_payment",
-        "Pause a payment execution.",
-        { ...paymentScope, body: z.string().optional().describe("Optional JSON body for PausePaymentRequest") },
+        {
+            description: "Pause a payment execution.",
+            inputSchema: { ...paymentScope, body: z.string().optional().describe("Optional JSON body for PausePaymentRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.pausePayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, body ? JSON.parse(body) : undefined);
@@ -84,10 +96,12 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "refresh_payment",
-        "Refresh a payment execution status.",
-        { ...paymentScope, body: z.string().optional().describe("Optional JSON body for RefreshPaymentRequest") },
+        {
+            description: "Refresh a payment execution status.",
+            inputSchema: { ...paymentScope, body: z.string().optional().describe("Optional JSON body for RefreshPaymentRequest") },
+        },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);
             const result = await api.refreshPayment(pcpClient.merchantId, commerceCaseId, checkoutId, paymentExecutionId, body ? JSON.parse(body) : undefined);
@@ -95,13 +109,15 @@ export function registerPaymentTools(server: McpServer, pcpClient: PcpClient): v
         },
     );
 
-    server.tool(
+    server.registerTool(
         "create_fund_split",
-        "Create a fund split for a payment event.",
         {
-            ...paymentScope,
-            eventId: z.string(),
-            body: z.string().describe("JSON body for FundSplitRequest"),
+            description: "Create a fund split for a payment event.",
+            inputSchema: {
+                ...paymentScope,
+                eventId: z.string(),
+                body: z.string().describe("JSON body for FundSplitRequest"),
+            },
         },
         async ({ commerceCaseId, checkoutId, paymentExecutionId, eventId, body }) => {
             const api = new PaymentExecutionApiClient(pcpClient.config);

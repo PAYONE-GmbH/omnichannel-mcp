@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { PcpClient } from "../pcp/client.js";
 import { CommerceCaseApiClient } from "pcp-server-nodejs-sdk";
+import { buildCommerceCasesQuery } from "../pcp/query-builder.js";
 
 function textResult(data: unknown) {
     return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
@@ -11,12 +12,26 @@ export function registerCommerceCaseTools(server: McpServer, pcpClient: PcpClien
     server.registerTool(
         "list_commerce_cases",
         {
-            description: "List commerce cases for the configured merchant. Optional JSON query params for filtering.",
-            inputSchema: { queryParams: z.string().optional().describe("Optional JSON for GetCommerceCasesQuery filter") },
+            description:
+                "List commerce cases for the configured merchant with optional filters. " +
+                "All parameters are optional. Use 'size' to limit results (default returns all). " +
+                "To find a specific commerce case by ID, prefer 'get_commerce_case' instead.",
+            inputSchema: {
+                offset: z.number().optional().describe("Pagination offset (0-based)"),
+                size: z.number().optional().describe("Max number of results to return"),
+                fromDate: z.string().optional().describe("Start date filter (ISO 8601, e.g. 2025-01-01T00:00:00Z)"),
+                toDate: z.string().optional().describe("End date filter (ISO 8601)"),
+                commerceCaseId: z.string().optional().describe("Filter by commerce case ID"),
+                merchantReference: z.string().optional().describe("Filter by merchant reference"),
+                merchantCustomerId: z.string().optional().describe("Filter by merchant customer ID"),
+                includeCheckoutStatus: z.array(z.string()).optional().describe("Filter by checkout statuses (e.g. OPEN, COMPLETED, CANCELLED)"),
+                includePaymentChannel: z.array(z.string()).optional().describe("Filter by payment channels (e.g. ECOMMERCE, POS)"),
+            },
         },
-        async ({ queryParams }) => {
+        async (params) => {
             const api = new CommerceCaseApiClient(pcpClient.config);
-            const query = queryParams ? JSON.parse(queryParams) : undefined;
+            const hasFilters = Object.values(params).some((v) => v !== undefined);
+            const query = hasFilters ? buildCommerceCasesQuery(params) : undefined;
             const result = await api.getCommerceCasesRequest(pcpClient.merchantId, query);
             return textResult(result);
         },

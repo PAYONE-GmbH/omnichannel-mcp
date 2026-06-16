@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { PcpClient } from "../pcp/client.js";
 import { CheckoutApiClient } from "pcp-server-nodejs-sdk";
+import { buildCheckoutsQuery } from "../pcp/query-builder.js";
 
 function textResult(data: unknown) {
     return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
@@ -11,12 +12,30 @@ export function registerCheckoutTools(server: McpServer, pcpClient: PcpClient): 
     server.registerTool(
         "list_checkouts",
         {
-            description: "List checkouts for the configured merchant. Optional JSON query params for filtering.",
-            inputSchema: { queryParams: z.string().optional().describe("Optional JSON for GetCheckoutsQuery filter") },
+            description:
+                "List checkouts for the configured merchant with optional filters. " +
+                "All parameters are optional. Use 'size' to limit results.",
+            inputSchema: {
+                offset: z.number().optional().describe("Pagination offset (0-based)"),
+                size: z.number().optional().describe("Max number of results to return"),
+                fromDate: z.string().optional().describe("Start date filter (ISO 8601)"),
+                toDate: z.string().optional().describe("End date filter (ISO 8601)"),
+                checkoutId: z.string().optional().describe("Filter by checkout ID"),
+                merchantReference: z.string().optional().describe("Filter by merchant reference"),
+                merchantCustomerId: z.string().optional().describe("Filter by merchant customer ID"),
+                paymentReference: z.string().optional().describe("Filter by payment reference"),
+                paymentId: z.string().optional().describe("Filter by payment ID"),
+                firstName: z.string().optional().describe("Filter by customer first name"),
+                surname: z.string().optional().describe("Filter by customer surname"),
+                email: z.string().optional().describe("Filter by customer email"),
+                includeCheckoutStatus: z.array(z.string()).optional().describe("Filter by checkout statuses"),
+                includePaymentChannel: z.array(z.string()).optional().describe("Filter by payment channels"),
+            },
         },
-        async ({ queryParams }) => {
+        async (params) => {
             const api = new CheckoutApiClient(pcpClient.config);
-            const query = queryParams ? JSON.parse(queryParams) : undefined;
+            const hasFilters = Object.values(params).some((v) => v !== undefined);
+            const query = hasFilters ? buildCheckoutsQuery(params) : undefined;
             const result = await api.getCheckoutsRequest(pcpClient.merchantId, query);
             return textResult(result);
         },

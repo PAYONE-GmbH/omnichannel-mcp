@@ -1,5 +1,5 @@
 {
-  "name": "@pcp/mcp-service",
+  "name": "@payone/pcp-mcp-service",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.28.0",
+    "pcp-server-nodejs-sdk": "1.11.0",
     "express": "4.22.2",
     "jsonwebtoken": "9.0.3",
     "jwks-rsa": "3.2.2",
-    "ws": "8.20.1",
     "zod": "3.25.76",
     "nanoid": "5.1.7"
   },

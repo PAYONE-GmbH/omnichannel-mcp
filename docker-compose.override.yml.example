@@ -11,7 +11,5 @@ services:
 
 networks:
   default: {}
-  patsy-backend:
-    external: true
   traefik:
     external: true

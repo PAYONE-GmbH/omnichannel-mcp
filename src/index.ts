@@ -58,16 +58,20 @@ async function start() {
 
     const mcpServer = createPcpMcpServer(pcpClient);
 
-    const tokenManager = new TokenManager({
-        keycloakUrl: KEYCLOAK_URL,
-        realm: KEYCLOAK_REALM,
-        clientId: KEYCLOAK_CLIENT_ID,
-        clientSecret: KEYCLOAK_CLIENT_SECRET,
-    });
+    if (KEYCLOAK_CLIENT_SECRET) {
+        const tokenManager = new TokenManager({
+            keycloakUrl: KEYCLOAK_URL,
+            realm: KEYCLOAK_REALM,
+            clientId: KEYCLOAK_CLIENT_ID,
+            clientSecret: KEYCLOAK_CLIENT_SECRET,
+        });
 
-    console.info("Fetching initial token from Keycloak...");
-    await tokenManager.getToken();
-    console.info("Initial token obtained");
+        console.info("Fetching initial token from Keycloak...");
+        await tokenManager.getToken();
+        console.info("Initial token obtained");
+    } else {
+        console.info("Keycloak not configured, skipping token fetch (API key auth only)");
+    }
 
     app.post("/mcp", async (req, res) => {
         try {

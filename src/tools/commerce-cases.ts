@@ -16,7 +16,7 @@ export function registerCommerceCaseTools(server: McpServer, pcpClient: PcpClien
                 "List commerce cases for the configured merchant. Returns an array of commerce cases. " +
                 "IMPORTANT: Always set 'size' to limit results (e.g. size=10). Without 'size', ALL cases are returned which can be very large. " +
                 "Results are returned in no guaranteed order. " +
-                "Use date filters (fromDate/toDate) in ISO 8601 format with the CURRENT year (2026) to narrow results. " +
+                "Use date filters (fromDate/toDate) in ISO 8601 format (current date: " + new Date().toISOString() + ") to narrow results. " +
                 "Example: to get recent cases, set fromDate to a recent date and size to a small number. " +
                 "To find a specific commerce case by ID, prefer 'get_commerce_case' instead.",
             inputSchema: {

@@ -1,7 +1,7 @@
 import express from "express";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { TokenManager } from "./auth/token-manager.js";
-import { createPatsyMcpServer } from "./server.js";
+import { createPcpMcpServer } from "./server.js";
 import { verifyToken, PatsyUser } from "./auth/keycloak.js";
 
 const APP_WS_URL = process.env.APP_SERVICE_WS_URL || "ws://patsy-app-service:3000/";
@@ -16,7 +16,7 @@ const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET || "";
 const app = express();
 app.use(express.json());
 
-let mcpServer: ReturnType<typeof createPatsyMcpServer> | null = null;
+let mcpServer: ReturnType<typeof createPcpMcpServer> | null = null;
 
 async function authenticateRequest(authHeader: string | undefined): Promise<PatsyUser> {
     if (!authHeader?.startsWith("Bearer ")) {
@@ -27,13 +27,13 @@ async function authenticateRequest(authHeader: string | undefined): Promise<Pats
 
     if (INTERNAL_API_KEY && token === INTERNAL_API_KEY) {
         return {
-            azp: "patsy-mcp",
-            sub: "api-key-user",
-            preferredUsername: "mcp-api-key",
+            azp: "pcp-mcp",
+            sub: "pcp-api-key-user",
+            preferredUsername: "pcp-mcp-api-key",
             fullName: "MCP API Key User",
             email: "",
-            roles: ["patsy_read_general", "patsy_write_general"],
-            groups: ["patsy-user"],
+            roles: [],
+            groups: [],
         };
     }
 

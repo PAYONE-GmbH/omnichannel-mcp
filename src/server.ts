@@ -1,19 +1,26 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { AppServiceClient } from "./ws/app-service-client.js";
-import { registerShopTools } from "./tools/shops.js";
-import { registerTestTools } from "./tools/tests.js";
+import { PcpClient } from "./pcp/client.js";
+import { registerCommerceCaseTools } from "./tools/commerce-cases.js";
+import { registerCheckoutTools } from "./tools/checkouts.js";
+import { registerPaymentTools } from "./tools/payments.js";
+import { registerOrderManagementTools } from "./tools/order-management.js";
+import { registerPaymentInformationTools } from "./tools/payment-information.js";
 
-export function createPatsyMcpServer(appClient: AppServiceClient): McpServer {
+export function createPcpMcpServer(pcpClient: PcpClient): McpServer {
     const server = new McpServer({
-        name: "patsy",
-        version: "26.04-2-SouthStar",
+        name: "pcp",
+        version: "1.0.0",
         description:
-            "Payone Automated Testing System (Patsy) – Create and manage fully configured Shopping Cart Systems (Shop-Systems) for E2E-Tests." +
-            " This MCP server provides tools for shop management, cleanup activities, and testing utilities to facilitate efficient and automated testing workflows.",
+            "PAYONE Commerce Platform (PCP) MCP Server – " +
+            "AI interface for the PCP Node.js SDK. " +
+            "Provides tools for managing Commerce Cases, Checkouts, Order Management, Payments, and Payment Information.",
     });
 
-    registerShopTools(server, appClient);
-    registerTestTools(server, appClient);
+    registerCommerceCaseTools(server, pcpClient);
+    registerCheckoutTools(server, pcpClient);
+    registerPaymentTools(server, pcpClient);
+    registerOrderManagementTools(server, pcpClient);
+    registerPaymentInformationTools(server, pcpClient);
 
     return server;
 }

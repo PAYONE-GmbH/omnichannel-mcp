@@ -1,6 +1,6 @@
 {
   "name": "@payone/pcp-mcp-service",
-  "version": "26.6.2-CloseConnect",
+  "version": "26.8.1-BehindBefore",
   "type": "module",
   "scripts": {
     "build": "tsc",

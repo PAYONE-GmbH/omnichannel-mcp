@@ -1,6 +1,6 @@
 {
   "name": "@payone/pcp-mcp-service",
-  "version": "26.6.2-CloseConnect",
+  "version": "26.8.1-BehindBefore",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -8,7 +8,7 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.28.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
     "pcp-server-nodejs-sdk": "1.11.0",
     "express": "4.22.2",
     "jsonwebtoken": "9.0.3",

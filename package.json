@@ -10,7 +10,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.30.0",
     "pcp-server-nodejs-sdk": "1.11.0",
-    "express": "4.22.2",
+    "express": "5.2.1",
     "jsonwebtoken": "9.0.3",
     "jwks-rsa": "3.2.2",
     "zod": "3.25.76",

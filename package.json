@@ -1,6 +1,6 @@
 {
   "name": "@payone/pcp-mcp-service",
-  "version": "26.9.2-FireFluid",
+  "version": "26.10.2-NostalgicNew",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -8,7 +8,7 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.30.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
     "pcp-server-nodejs-sdk": "1.11.0",
     "express": "5.2.1",
     "jsonwebtoken": "9.0.3",

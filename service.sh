@@ -31,20 +31,26 @@ COMMAND_STOP="stop"
 
 function build_container_image() {
   if [[ "$1" == "no-cache" ]]; then
-    printf "Building without cache...\n"
-    docker compose build --no-cache
+    printf "Building without cache and pulling latest base images...\n"
+    docker compose build --pull --no-cache
   else
-    printf "Building with cache...\n"
-    docker compose build
+    printf "Building with cache and checking for base image updates...\n"
+    docker compose build --pull
   fi
 }
 
 function process_update() {
   printf "Pulling latest changes from git...\n"
   git pull
-  build_container_image
+
+  printf "Pulling latest third-party images defined in compose...\n"
+  docker compose pull
+
+  # Für Sicherheits-Updates standardmäßig no-cache erzwingen
+  build_container_image "no-cache"
+
   printf "Starting updated containers...\n"
-  docker compose up -d
+  docker compose up -d --force-recreate
 }
 
 #########################################

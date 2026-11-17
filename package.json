@@ -1,6 +1,6 @@
 {
   "name": "@payone/pcp-mcp-service",
-  "version": "26.10.2-NostalgicNew",
+  "version": "26.11.2-ProgressivePlunge",
   "type": "module",
   "scripts": {
     "build": "tsc",
